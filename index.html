@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#10131b">
+    <title>Rift Rumble — Arena Shifter</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="game.js" defer></script>
+  </head>
+  <body>
+    <main class="game-shell">
+      <header class="topbar">
+        <a class="wordmark" href="#" aria-label="Rift Rumble home">RIFT<span>//</span>RUMBLE</a>
+        <div class="topbar-note"><span class="live-dot"></span> ARENA LIVE <span class="topbar-divider">/</span> SOLO TRIAL</div>
+      </header>
+
+      <section class="intro">
+        <div>
+          <p class="eyebrow">THE FLOOR IS YOUR WEAPON</p>
+          <h1>Own the <span>pull.</span></h1>
+          <p class="intro-copy">Outfight the rift. Outthink the arena.</p>
+        </div>
+        <div class="wave-card">
+          <span class="eyebrow">CURRENT TRIAL</span>
+          <strong id="wave-label">WAVE 01 <span>/ 03</span></strong>
+          <div class="wave-track"><i id="wave-progress"></i></div>
+        </div>
+      </section>
+
+      <div class="game-layout">
+        <section class="arena-panel" aria-label="Battle arena">
+          <div class="arena-heading">
+            <div><span class="eyebrow">GRAVITY FIELD</span><strong id="gravity-label">PULLING SOUTH</strong></div>
+            <span class="turn-badge" id="turn-label">TURN 01</span>
+          </div>
+          <div id="arena" class="arena" role="grid" aria-label="Seven by seven battle grid"></div>
+          <div class="arena-legend">
+            <span><i class="legend-player"></i> YOU</span>
+            <span><i class="legend-enemy"></i> HOSTILE</span>
+            <span><i class="legend-rift"></i> RIFT CORE</span>
+          </div>
+        </section>
+
+        <aside class="command-panel">
+          <section class="pilot-card">
+            <div class="pilot-top"><span class="eyebrow">YOUR PILOT</span><span class="pilot-rank">RIFT RUNNER</span></div>
+            <div class="health-label"><span>HULL INTEGRITY</span><strong id="health-label">12 / 12</strong></div>
+            <div class="health-track"><i id="health-bar"></i></div>
+            <div class="charge-row"><span>RIFT CHARGE</span><div id="charge-pips" class="charge-pips"></div></div>
+          </section>
+
+          <section class="controls-section">
+            <div class="section-title"><span class="eyebrow">YOUR MOVE</span><span class="action-count" id="actions-label">2 ACTIONS</span></div>
+            <div class="action-grid">
+              <button class="action-button" id="strike-button"><span class="button-icon">✳</span><span><strong>Strike</strong><small>3 damage · adjacent</small></span><kbd>J</kbd></button>
+              <button class="action-button" id="surge-button"><span class="button-icon surge-icon">⌁</span><span><strong>Rift surge</strong><small>4 damage · costs 2 charge</small></span><kbd>K</kbd></button>
+            </div>
+            <div class="gravity-title"><span>SET GRAVITY</span><small>Free · once per turn</small></div>
+            <div class="gravity-picks" role="group" aria-label="Choose gravity direction">
+              <button data-gravity="north" aria-label="Pull north">↑ <span>N</span></button>
+              <button data-gravity="west" aria-label="Pull west">← <span>W</span></button>
+              <button data-gravity="south" aria-label="Pull south">↓ <span>S</span></button>
+              <button data-gravity="east" aria-label="Pull east">→ <span>E</span></button>
+            </div>
+            <div class="movement-row">
+              <span class="movement-label">MOVE <small>1 action</small></span>
+              <div class="move-pad" aria-label="Move controls">
+                <button data-move="north" aria-label="Move north">↑</button>
+                <button data-move="west" aria-label="Move west">←</button>
+                <button data-move="south" aria-label="Move south">↓</button>
+                <button data-move="east" aria-label="Move east">→</button>
+              </div>
+            </div>
+            <button id="end-turn-button" class="end-turn">END TURN <span>↗</span></button>
+          </section>
+
+          <section class="battle-feed">
+            <div class="section-title"><span class="eyebrow">COMBAT FEED</span><span class="feed-live">● LIVE</span></div>
+            <ol id="combat-log" aria-live="polite" aria-relevant="additions"></ol>
+          </section>
+        </aside>
+      </div>
+
+      <footer class="game-footer">
+        <p><kbd>WASD</kbd> / <kbd>↑↓←→</kbd> move <span>·</span> <kbd>J</kbd> strike <span>·</span> <kbd>K</kbd> surge</p>
+        <button id="restart-button" class="restart-button">RESTART TRIAL ↻</button>
+      </footer>
+      <div id="result-banner" class="result-banner" role="status" hidden></div>
+    </main>
+  </body>
+</html>
