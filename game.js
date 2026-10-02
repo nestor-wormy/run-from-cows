@@ -53,14 +53,19 @@
   }
 
   function spawnWave() {
-    game.enemies = WAVES[game.wave - 1].map((spawn, index) => ({
-      id: `${game.wave}-${index}`,
-      kind: spawn.kind,
-      x: spawn.x,
-      y: spawn.y,
-      hp: ENEMY_TYPES[spawn.kind].hp,
-      maxHp: ENEMY_TYPES[spawn.kind].hp
-    }));
+    game.enemies = [];
+    WAVES[game.wave - 1].forEach((spawn, index) => {
+      const landing = findLanding(spawn.x, spawn.y, null);
+      if (!landing) return;
+      game.enemies.push({
+        id: `${game.wave}-${index}`,
+        kind: spawn.kind,
+        x: landing.x,
+        y: landing.y,
+        hp: ENEMY_TYPES[spawn.kind].hp,
+        maxHp: ENEMY_TYPES[spawn.kind].hp
+      });
+    });
     game.actions = 2;
     game.gravityChanged = false;
     addLog(`Wave ${String(game.wave).padStart(2, "0")} enters the arena.`);
@@ -81,22 +86,25 @@
 
   function occupied(x, y, except) {
     return (game.player !== except && game.player.x === x && game.player.y === y)
-      || game.enemies.some((enemy) => enemy !== except && enemy.x === x && enemy.y === y);
+      || game.enemies.some((enemy) => enemy !== except && enemy.hp > 0 && enemy.x === x && enemy.y === y);
   }
 
   function spendAction() {
     game.actions -= 1;
-    if (game.enemies.length === 0) {
-      if (game.wave === WAVES.length) {
-        game.finished = true;
-        addLog("Trial complete. The arena is yours.");
-      } else {
-        game.wave += 1;
-        addLog(`Wave ${game.wave - 1} cleared.`);
-        spawnWave();
-      }
-    }
+    advanceWaveIfClear();
     render();
+  }
+
+  function advanceWaveIfClear() {
+    if (game.enemies.length > 0 || game.finished) return;
+    if (game.wave === WAVES.length) {
+      game.finished = true;
+      addLog("Trial complete. The arena is yours.");
+    } else {
+      game.wave += 1;
+      addLog(`Wave ${game.wave - 1} cleared.`);
+      spawnWave();
+    }
   }
 
   function movePlayer(direction) {
@@ -199,6 +207,8 @@
       return;
     }
     applyGravity();
+    advanceWaveIfClear();
+    if (game.finished) return;
     game.turn += 1;
     game.actions = 2;
     game.gravityChanged = false;
@@ -228,7 +238,10 @@
         }
       }
     }
-    game.enemies = game.enemies.filter((enemy) => enemy.hp > 0);
+    const survivingEnemies = game.enemies.filter((enemy) => enemy.hp > 0);
+    const defeatedCount = game.enemies.length - survivingEnemies.length;
+    if (defeatedCount > 0) game.charge = Math.min(3, game.charge + defeatedCount);
+    game.enemies = survivingEnemies;
     if (game.player.hp <= 0) {
       game.player.hp = 0;
       game.finished = true;
